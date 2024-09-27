@@ -1,0 +1,345 @@
+
+Pasos para Crear un Proyecto Node.js de Backend
+
+----------------------------------------------------------
+1. Instalar Node.js
+----------------------------------------------------------
+    Si no tienes Node.js instalado, ve a nodejs.org y descarga la versión LTS (recomendada).
+    Verifica la instalación ejecutando:
+
+    bash
+        Copiar código
+
+        node -v
+        npm -v
+
+----------------------------------------------------------
+2. Crear un Directorio para el Proyecto
+----------------------------------------------------------
+    Crea una carpeta para tu proyecto y navega hacia ella:
+
+    mkdir proyectoweb2024
+    cd proyectoweb2024
+
+----------------------------------------------------------
+3. Inicializar el Proyecto con npm
+----------------------------------------------------------
+
+    Inicializa un nuevo proyecto de Node.js:
+
+    npm init -y
+
+    Esto creará un archivo package.json que gestiona las dependencias.
+
+----------------------------------------------------------
+4. Instalar Dependencias
+----------------------------------------------------------
+    Instala las siguientes dependencias:
+
+
+    Express para manejar las rutas y peticiones HTTP.
+    pg para manejar la conexión con PostgreSQL.
+    nodemon para reiniciar el servidor automáticamente en modo desarrollo.
+
+    pg para manejar la conexión con PostgreSQL.
+    nodemon para reiniciar el servidor automáticamente en modo desarrollo.
+
+    npm install express 
+    npm install -g pg // localmente npm install pg
+    npm install -g nodemon
+
+
+    Verificar que se instalaron:
+
+        npm list express
+        npm list -g pg
+        nodemon -v
+
+----------------------------------------------------------
+5. Crear el Archivo de Punto de Inicio app.js
+----------------------------------------------------------
+
+    y poner dentro
+
+    console.log("Esto será la aplicación web");
+
+----------------------------------------------------------
+6. Configurar el Script de Inicio en package.json
+----------------------------------------------------------
+
+    Ahora que el archivo app.js existe y las dependencias están instaladas, configura los scripts de inicio en el archivo package.json.
+    
+    Abre el archivo package.json y edita la sección de scripts para que quede así:
+    json
+
+    Copiar código
+    "scripts": {
+        "start": "node app.js",
+        "dev": "nodemon app.js"
+    }
+
+    Esto te permitirá ejecutar el servidor 
+    con 
+    
+    npm start para producción 
+    npm run dev en modo desarrollo usando nodemon.
+
+----------------------------------------------------------
+7. Comenzar a programar el Servidor de Node en el 
+----------------------------------------------------------
+    archivo app.js
+
+
+    console.log("Esto será la aplicación web");
+
+    /* importo la clase express */
+    const ClaseExpress = require('express');
+
+    /* importo la biblioteca de postgre */
+
+    const { Pool } = require('pg'); // Importar Pool para conectar con PostgreSQL
+
+    /* creo una instancia de la clase express para poder
+    configurar y trabajar con el servidor */
+
+    const ServidorWeb = ClaseExpress();
+
+    /* configuro el puerto donde escuchará la aplicación web */
+
+    const PORT = 3000;
+
+    /* Middleware para manejar JSON en las peticiones */
+
+    ServidorWeb.use(ClaseExpress.json());
+
+    // Configurar la conexión a PostgreSQL
+    const pool = new Pool({
+        user: 'postgres',        // Usuario de PostgreSQL
+        host: 'localhost',        // Dirección del servidor
+        database: 'dbclientes',   // Nombre de la base de datos
+        password: '12345678',     // Contraseña del usuario de PostgreSQL
+        port: 5432,               // Puerto de PostgreSQL (por defecto es 5432)
+    });
+
+----------------------------------------------------------
+8. Iniciar el Servidor
+----------------------------------------------------------
+    Si quieres iniciar el servidor en modo desarrollo (con nodemon), ejecuta:
+
+    npm run dev (desarrollo)
+
+    npm start (producción)
+
+----------------------------------------------------------
+9. Probar el Proyecto
+----------------------------------------------------------
+    Abre tu navegador o una herramienta como Postman y prueba las siguientes rutas:
+
+    Para ver el mensaje de bienvenida: http://localhost:3000
+    Para ver los clientes de la tabla cliente: http://localhost:3000/cliente
+
+----------------------------------------------------------
+10. Configurar Variables de Entorno (Opcional)
+----------------------------------------------------------
+    Para proteger las credenciales, puedes usar variables de entorno con el archivo .env.
+    Instala el paquete dotenv:
+
+    10.2)
+        npm install dotenv
+
+    10.3)
+        Crea un archivo .env en la raíz del proyecto: env
+
+        DB_USER=postgres
+        DB_HOST=localhost
+        DB_DATABASE=dbclientes
+        DB_PASSWORD=12345678
+        DB_PORT=5432
+
+    3) Modifica app.js para utilizar las variables de entorno:
+
+        require('dotenv').config();
+
+        const pool = new Pool({
+            user: process.env.DB_USER,
+            host: process.env.DB_HOST,
+            database: process.env.DB_DATABASE,
+            password: process.env.DB_PASSWORD,
+            port: process.env.DB_PORT,
+        });
+
+
+----------------------------------------------------------
+11.) a ESTA ALTURA EL PROYECTO DEBERÍA QUEDAR ASÍ.
+----------------------------------------------------------
+
+    
+    console.log("Esto será la aplicación web");
+
+    /* importo la clase express */
+    const ClaseExpress = require('express');
+
+    /* importo la biblioteca de postgre */
+
+    const { Pool } = require('pg'); // Importar Pool para conectar con PostgreSQL
+
+    /* creo una instancia de la clase express para poder
+    configurar y trabajar con el servidor */
+
+    const ServidorWeb = ClaseExpress();
+
+    /* configuro el puerto donde escuchará la aplicación web */
+
+    const PORT = 3000;
+
+    /* Middleware para manejar JSON en las peticiones */
+    ServidorWeb.use(ClaseExpress.json());
+
+    /* requiero la biblioteca dotenv - variables de entorno */
+    require('dotenv').config();
+
+    const pool = new Pool({
+        user: process.env.DB_USER,
+        host: process.env.DB_HOST,
+        database: process.env.DB_DATABASE,
+        password: process.env.DB_PASSWORD,
+        port: process.env.DB_PORT,
+    });
+
+
+    /* Configurar la conexión a PostgreSQL
+    const pool = new Pool({
+        user: 'postgres',        // Usuario de PostgreSQL
+        host: 'localhost',        // Dirección del servidor
+        database: 'dbclientes',   // Nombre de la base de datos
+        password: '12345678',     // Contraseña del usuario de PostgreSQL
+        port: 5432,               // Puerto de PostgreSQL (por defecto es 5432)
+    });
+
+    */
+ 
+    ServidorWeb.get('/', (req, res) => {
+        res.send('¡Bienvenido a mi API de clientes!');
+    });
+
+    // Definir una ruta para obtener todos los clientes
+    ServidorWeb.get('/cliente', async (req, res) => {
+        try {
+            const resultado = await pool.query('SELECT * FROM cliente'); // Consulta SQL
+            res.json(resultado.rows); // Enviar los resultados como JSON
+        } catch (err) 
+        {
+            console.error('Error al consultar la base de datos', err);
+            res.status(500).send('Error al consultar la base de datos');
+        }
+    });
+
+    // Iniciar el servidor en el puerto 3000
+    ServidorWeb.listen(PORT, () => 
+        {
+        console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    });
+
+----------------------------------------------------------
+11.) a ESTA ALTURA EL PROYECTO DEBERÍA QUEDAR ASÍ.
+----------------------------------------------------------
+
+
+    console.log("Esto será la aplicación web");
+
+    /* importo la clase express */
+    const ClaseExpress = require('express');
+
+    /* importo la biblioteca de postgre */
+
+    const { Pool } = require('pg'); // Importar Pool para conectar con PostgreSQL
+
+    /* creo una instancia de la clase express para poder
+    configurar y trabajar con el servidor */
+
+    const ServidorWeb = ClaseExpress();
+
+    /* configuro el puerto donde escuchará la aplicación web */
+
+    const PORT = 3000;
+
+    /* Middleware para manejar JSON en las peticiones */
+    ServidorWeb.use(ClaseExpress.json());
+
+    /* requiero la biblioteca dotenv - variables de entorno */
+    require('dotenv').config();
+
+    console.log("DB_USER:", process.env.DB_USER);
+    console.log("DB_PASSWORD:", process.env.DB_PASSWORD);
+
+    const pool = new Pool({
+        user: process.env.DB_USER,        // Usuario de PostgreSQL
+        host: process.env.DB_HOST,        // Dirección del servidor
+        database: process.env.DB_DATABASE, // Nombre de la base de datos
+        password: String(process.env.DB_PASSWORD), // Forzar a que la contraseña sea un string
+        port: process.env.DB_PORT,        // Puerto de PostgreSQL
+    });
+
+
+    /* Configurar la conexión a PostgreSQL
+    const pool = new Pool({
+        user: 'postgres',        // Usuario de PostgreSQL
+        host: 'localhost',        // Dirección del servidor
+        database: 'dbclientes',   // Nombre de la base de datos
+        password: '12345678',     // Contraseña del usuario de PostgreSQL
+        port: 5432,               // Puerto de PostgreSQL (por defecto es 5432)
+    });
+
+    */
+
+    ServidorWeb.get('/', (req, res) => {
+        res.send('¡Bienvenido a mi API de clientes!');
+    });
+
+    // Definir una ruta para obtener todos los clientes
+    ServidorWeb.get('/cliente', async (req, res) => {
+        try {
+            const resultado = await pool.query('SELECT * FROM cliente'); // Consulta SQL
+            res.json(resultado.rows); // Enviar los resultados como JSON
+        } catch (err) 
+        {
+            console.error('Error al consultar la base de datos', err);
+            res.status(500).send('Error al consultar la base de datos');
+        }
+    });
+
+    // Iniciar el servidor en el puerto 3000
+    ServidorWeb.listen(PORT, () => 
+        {
+        console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    });
+
+----------------------------------------------------------
+12.) ORGANIZAR CARPETAS, RUTAS, ETC.
+----------------------------------------------------------
+
+    Estructura del Proyecto
+    Primero, la estructura del proyecto quedaría así:
+
+    proyecto-backend/
+    ├── app.js                # Archivo principal que configura el servidor
+    ├── .env                  # Archivo de variables de entorno
+    ├── routes/               # Carpeta para las rutas
+    │   └── clienteRoutes.js  # Archivo de rutas para 'cliente'
+    ├── controllers/          # Carpeta para los controladores
+    │   └── clienteController.js  # Archivo de controladores para 'cliente'
+    ├── node_modules/         # Dependencias
+    └── package.json          # Archivo de dependencias
+
+   Paso 1: Crear los Controladores
+        Crear la carpeta controllers si no la tienes.
+        Crear el archivo clienteController.js dentro de la carpeta controllers.
+
+----------------------------------------------------------
+13.) MIDELWAREs
+----------------------------------------------------------
+
+    ServidorWeb.use(ClaseExpress.static("FrontEnd"));
+    ServidorWeb.use(ClaseExpress.json());
+    ServidorWeb.use(ClaseExpress.text());
+    ServidorWeb.use(ClaseExpress.urlencoded({extended:false}));

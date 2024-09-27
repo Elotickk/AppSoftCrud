@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Productos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .productos {
+            margin-top: 20px;
+        }
+        .producto {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Productos Electrónicos</h1>
+
+    <h2>Añadir Producto</h2>
+    <form id="formAgregarProducto">
+        <label for="nombrecb">Codigo de barra:</label>
+        <input type="number" id="nombrecb" required>
+        <br>
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" required>
+        <br>
+        <label for="precio">Precio:</label>
+        <input type="number" id="precio" required>
+        <br>
+        <label for="stock">Stock:</label>
+        <input type="number" id="stock" required>
+        <br>
+        <button type="submit">Agregar Producto</button>
+    </form>
+    <br>
+
+    <!-- Botón para cargar productos -->
+    <button id="cargarProductos">Cargar Productos</button>
+
+    <!-- Contenedor donde se mostrará la lista de productos -->
+    <div class="productos" id="listaProductos"></div>
+    <br>
+
+    <h2>Editar producto</h2>
+    <!-- Formulario para editar productos -->
+<form id="formEditarProducto" style="display:none;">
+    <label for="editarNombrecb">Código de Barras:</label>
+    <input type="text" id="editarNombrecb" name="productocb"><br>
+
+    <label for="editarNombre">Nombre del Producto:</label>
+    <input type="text" id="editarNombre" name="productonombre"><br>
+
+    <label for="editarPrecio">Precio:</label>
+    <input type="number" id="editarPrecio" name="productoprecio"><br>
+
+    <label for="editarStock">Stock:</label>
+    <input type="number" id="editarStock" name="productosstock"><br>
+
+    <input type="hidden" id="editarIdProducto"> <!-- ID del producto oculto -->
+
+    <button type="button" id="btnGuardarCambios" >Guardar Cambios</button>
+</form>
+    
+
+    <script src="app.js"></script>
+</body>
+</html>
